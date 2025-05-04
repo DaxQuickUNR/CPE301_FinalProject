@@ -8,7 +8,7 @@ dht DHT;                    // create a DHT object
 LiquidCrystal lcd(11, 12, 2, 3, 4, 5);
 
 unsigned long previousMillis = 0;
-const unsigned long interval = 2000;  // update every 60 seconds
+const unsigned long interval = 60000;  // update every 60 seconds
 
 void setup() {
   lcd.begin(16, 2);        // initialize the 16×2 LCD
