@@ -1,4 +1,4 @@
-##include <DHT.h>
+#include <DHT.h>
 #include <avr/io.h>
 
 // DHT configuration
