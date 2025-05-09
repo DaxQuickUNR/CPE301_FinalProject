@@ -16,6 +16,24 @@ volatile unsigned char* my_ADCSRB = (unsigned char*) 0x7B;
 volatile unsigned char* my_ADCSRA = (unsigned char*) 0x7A;
 volatile unsigned int*  my_ADC_DATA = (unsigned int*) 0x78;
 
+//Duplicate of Delay implementation from DateTimeSensor Code, will merge in  final code file.
+void oneSecDelay() {
+  // Stop Timer1
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1 = 0;
+
+  // Set prescaler to 1024: CS12 = 1, CS10 = 1
+  TCCR1B |= (1 << CS12) | (1 << CS10);
+
+  // Wait for 1 second worth of ticks: 16MHz / 1024 = 15625
+  while (TCNT1 < 15625);
+
+  // Stop timer
+  TCCR1B = 0;
+
+}
+
 void setup() 
 {
   // setup the UART
@@ -29,47 +47,21 @@ void loop()
   //Setup variable to read waterDataInput from channel 0 (A0) as this is where the sensor is connected.
   unsigned int waterDataInput = adc_read(0);
   
-  //NOTE: 75 is a placeholder value for testing purposes. (This will be modified after testing with actual project reservoir)
-  unsigned int threshold = 75;           
+  unsigned int threshold = 80;           
 
   //If the waterDataInput is less than the threshold, display a warning message on the Serial monitor.
   if(waterDataInput < threshold)
   {
     char *thresholdMessage = "Water Level is Low! Please fill resevoir. \r\n";
+    oneSecDelay(); //Delay so serial monitor isn't spammed.
     int i = 0;
     while (thresholdMessage[i] != '\0')
     {
       //We can use "U0outchar" to send each character to the console one at a time.
       U0putchar(thresholdMessage[i]);
       i++;
-    }
-
-
-    
-    //NOTE: Future interfacing with LCD to display error message will go here.
-
-
-     
+    } 
   }
-else
-{
-  //If threshold isn't exceeded we want to print data reading. However, this must be done character by character.
-
-    if (waterDataInput >= 100) 
-    {
-      U0putchar((waterDataInput / 100) % 10 + '0');  // Seperate out and print hundreds digit if it exists
-    }
-
-    if (waterDataInput >= 10)
-    {
-      U0putchar((waterDataInput / 10) % 10 + '0');   // Seperate out and print tens digit if it exists
-    }
-
-    U0putchar(waterDataInput % 10 + '0');            // Seperate out and print ones digit (this will always exist)
-
-  U0putchar('\n');  //Move to the next line after digits have been sent to the Serial Monitor.
-
-}
 }
 
 void adc_init() 
