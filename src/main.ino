@@ -106,7 +106,7 @@ void VentLoop() {
   else if (dir==2) VentMotor.step(1);
 }
 
-// ────── DHT + LCD 显示 ──────
+// ────── DHT + LCD display ──────
 LiquidCrystal lcd(11,12,2,3,4,5);
 unsigned long lastDht = 0;
 
