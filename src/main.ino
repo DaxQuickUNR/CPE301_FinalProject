@@ -115,7 +115,7 @@ void DhtLcdSetup() {
   dht.begin();
 }
 void DhtLcdLoop() {
-  if (millis() - lastDht < 2000) return;
+  if (millis() - lastDht < 60000) return;
   lastDht = millis();
   float T = dht.readTemperature();
   float H = dht.readHumidity();
